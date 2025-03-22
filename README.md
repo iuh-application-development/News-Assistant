@@ -1,10 +1,4 @@
 # Hướng dẫn cài đặt và chạy dự án web
-
-## Yêu cầu hệ thống
-- Python 3.8 trở lên
-- pip (Python package installer)
-- Git (tùy chọn, để clone repository)
-
 ## Các bước cài đặt
 
 ### 1. Clone repository (nếu sử dụng Git)
@@ -53,17 +47,6 @@ python manage.py runserver
 - Mở trình duyệt web và truy cập: `http://127.0.0.1:8000`
 - Đăng nhập với tài khoản superuser đã tạo ở bước 6
 
-## Cấu trúc thư mục
-```
-project/
-├── config/             # Cấu hình chính của dự án
-├── home/              # Ứng dụng chính
-├── static/            # File tĩnh (CSS, JS, images)
-├── templates/         # Templates HTML
-├── manage.py         # Script quản lý Django
-└── requirements.txt  # Danh sách các thư viện cần thiết
-```
-
 ## Xử lý lỗi thường gặp
 1. Nếu gặp lỗi "ModuleNotFoundError":
    - Kiểm tra môi trường ảo đã được kích hoạt chưa
@@ -75,6 +58,3 @@ project/
 
 3. Nếu gặp lỗi static files:
    - Chạy lệnh `python manage.py collectstatic`
-
-## Liên hệ
-Nếu bạn gặp bất kỳ vấn đề nào trong quá trình cài đặt, vui lòng liên hệ với quản trị viên hệ thống. 
