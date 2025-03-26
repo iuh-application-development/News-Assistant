@@ -45,27 +45,3 @@ python manage.py runserver
 
 ### 8. Truy cập website
 - Mở trình duyệt web và truy cập: `http://127.0.0.1:8000`
-- Đăng nhập với tài khoản superuser đã tạo ở bước 6
-
-## Cấu trúc thư mục
-```
-project/
-├── config/             # Cấu hình chính của dự án
-├── home/              # Ứng dụng chính
-├── static/            # File tĩnh (CSS, JS, images)
-├── templates/         # Templates HTML
-├── manage.py         # Script quản lý Django
-└── requirements.txt  # Danh sách các thư viện cần thiết
-```
-
-## Xử lý lỗi thường gặp
-1. Nếu gặp lỗi "ModuleNotFoundError":
-   - Kiểm tra môi trường ảo đã được kích hoạt chưa
-   - Chạy lại lệnh `pip install -r requirements.txt`
-
-2. Nếu gặp lỗi database:
-   - Kiểm tra cấu hình database trong `settings.py`
-   - Chạy lại các lệnh migration
-
-3. Nếu gặp lỗi static files:
-   - Chạy lệnh `python manage.py collectstatic`
