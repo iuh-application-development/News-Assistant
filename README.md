@@ -1,13 +1,7 @@
-# Hướng dẫn cài đặt và chạy dự án web
-
-## Yêu cầu hệ thống
-- Python 3.8 trở lên
-- pip (Python package installer)
-- Git (tùy chọn, để clone repository)
 
 ## Các bước cài đặt
 
-### 1. Clone repository (nếu sử dụng Git)
+### 1. Clone repository 
 ```bash
 git clone <repository-url>
 cd <project-directory>
@@ -75,6 +69,3 @@ project/
 
 3. Nếu gặp lỗi static files:
    - Chạy lệnh `python manage.py collectstatic`
-
-## Liên hệ
-Nếu bạn gặp bất kỳ vấn đề nào trong quá trình cài đặt, vui lòng liên hệ với quản trị viên hệ thống. 
