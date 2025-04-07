@@ -1,0 +1,22 @@
+{% for item in iteam_rss %}
+<div class="col-md-4">
+    <div class="card mb-4">
+        <div class="position-relative">
+            <a href="{{item.link}}" target="_blank">
+                <img src="{{item.image}}" class="card-img-top custom-image" alt="{{item.title}}">
+            </a>
+            <!-- Hiển thị nguồn báo ở góc -->
+            <span class="news-source-badge">{{item.source}}</span>
+        </div>
+        <div class="card-body custom-box">
+            <a href="{{item.link}}" target="_blank" class="text-dark">
+                <h5 class="card-title">{{item.title}}</h5>
+            </a>
+            <p class="card-text">{{item.description}}</p>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">{{item.pub_date}}</small>
+        </div>
+    </div>
+</div>
+{% endfor %}

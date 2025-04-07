@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrahead %}
+<script>
+
+function slugify(str) {
+    str = str.toLowerCase();
+    str = str.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
+    str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+    str = str.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
+    str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+    str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
+    str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
+    str = str.replace(/đ/gi, 'd');
+    str = str.replace(/[^a-z0-9]/gi, '-');
+    str = str.replace(/-+/g, '-');
+    str = str.replace(/^-|-$/g, '');
+    return str;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('categoryfeed_form')) {
+        const nameInput = document.querySelector('#id_name');
+        const slugInput = document.querySelector('#id_slug');
+        
+        if (nameInput && slugInput) {
+            nameInput.addEventListener('input', function() {
+                slugInput.value = slugify(this.value);
+            });
+        }
+    }
+});
+</script>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %} 

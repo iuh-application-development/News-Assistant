@@ -3,9 +3,156 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1 class="display-4">Welcome</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAUCON_VN.com</title>
+    <link href="https://zendvn.com/frontend/assets/images/favicon.ico" sizes="128x128" rel="shortcut icon" type="image/x-icon">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .flex-grow-1 {
+            flex-grow: 1;
+            min-height: 0;
+        }
+        .custom-box {
+            height: 220px;
+            overflow: hidden;
+        }
+        .custom-image {
+            height: 180px;
+            overflow: hidden;
+        }
+        img {
+            object-fit: cover;
+        }
+        .full-width-footer {
+            width: 100%;
+            background-color: #343a40; /* Màu nền tối */
+            color: white;
+            padding: 15px 0;
+            margin-top: auto; /* Đẩy footer xuống dưới cùng */
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            text-align: center;
+        }
+        .news-source-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 10;
+        }
+        .category-title {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dc3545;
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column">
+
+    <div class="flex-grow-1 mb-5 mt-5">
+        <div class="container">
+            {% if selected_category_slug %}
+                {% for category in categories %}
+                    {% if category.slug == selected_category_slug %}
+                        <h2 class="category-title">Tin tức {{ category.name }}</h2>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            <!-- Phần tin RSS -->
+            <div class="row" id="news-container">
+                {%for item in iteam_rss %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="position-relative">
+                            <a href="{{item.link}}" target="_blank">
+                                <img src="{{item.image}}" class="card-img-top custom-image" alt="{{item.title}}">
+                            </a>
+                            <!-- Hiển thị nguồn báo ở góc -->
+                            <span class="news-source-badge">{{item.source}}</span>
+                        </div>
+                        <div class="card-body custom-box">
+                            <a href="{{item.link}}" target="_blank" class="text-dark">
+                                <h5 class="card-title">{{item.title}}</h5>
+                            </a>
+                            <p class="card-text">{{item.description}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">{{item.pub_date}}</small>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-4 mb-5" id="load-more-container">
+                <button id="load-more-btn" class="btn btn-primary">Tải thêm tin</button>
+            </div>
+
+        </div>
     </div>
-</div>
+
+    <script>
+        // JavaScript for loading more news
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentPage = 1;
+            const loadMoreBtn = document.getElementById('load-more-btn');
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    currentPage++;
+
+                    // Get the selected feed from the URL if any
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const selectedFeed = urlParams.get('feed');
+                    const selectedCategory = urlParams.get('category');
+
+                    // Prepare URL for AJAX request
+                    let url = `/load-more-news/?page=${currentPage}`;
+                    if (selectedFeed) {
+                        url += `&feed=${selectedFeed}`;
+                    }
+                    if (selectedCategory) {
+                        url += `&category=${selectedCategory}`;
+                    }
+
+                    // Send AJAX request
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Append the new content
+                            document.getElementById('news-container').insertAdjacentHTML('beforeend', data.html);
+
+                            // Hide load more button if no more items
+                            if (!data.has_more) {
+                                document.getElementById('load-more-container').style.display = 'none';
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
 {% endblock %}
