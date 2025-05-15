@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="flex-grow-1 mb-5 mt-5">
+    <div class="container">
+        <h2 class="category-title">{{ category.name }}</h2>
+        <div class="row">
+            {% for article in articles %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <a href="#">
+                        <img src="{{ article.image.url }}" class="card-img-top custom-image" alt="{{ article.name }}">
+                    </a>
+                    <div class="card-body custom-box">
+                        <a href="#" class="text-dark">
+                            <h5 class="card-title">{{ article.name }}</h5>
+                        </a>
+                        <p class="card-text">{{ article.content|safe|truncatechars:100 }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">{{ article.publish_date }}</small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p>Không có bài viết nào thuộc danh mục này.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% if category_feeds %}
+<div class="mt-5">
+    <h3>RSS Feeds for {{ category.name }}</h3>
+    <div class="row" id="category-feeds-container">
+        {% for feed_item in feed_items %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="position-relative">
+                    <a href="{{ feed_item.link }}" target="_blank">
+                        <img src="{{ feed_item.image }}" class="card-img-top custom-image" alt="{{ feed_item.title }}">
+                    </a>
+                    <span class="news-source-badge">{{ feed_item.source }}</span>
+                </div>
+                <div class="card-body custom-box">
+                    <a href="{{ feed_item.link }}" target="_blank" class="text-dark">
+                        <h5 class="card-title">{{ feed_item.title }}</h5>
+                    </a>
+                    <p class="card-text">{{ feed_item.description }}</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">{{ feed_item.pub_date }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

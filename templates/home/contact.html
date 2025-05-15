@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Liên Hệ{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="text-center mb-4">Liên Hệ Với Chúng Tôi</h1>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form id="contactForm" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Tiêu đề</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Nội dung</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Gửi tin nhắn</button>
+                    </form>
+                    
+                    <!-- Alert messages -->
+                    <div id="successAlert" class="alert alert-success mt-3" style="display: none;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span id="successMessage"></span>
+                    </div>
+                    
+                    <div id="errorAlert" class="alert alert-danger mt-3" style="display: none;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+
+                    <!-- Reply section -->
+                    <div id="replySection" class="mt-4" style="display: none;">
+                        <h4>Phản hồi từ admin</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <p id="replyMessage"></p>
+                                <small class="text-muted" id="replyDate"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Thông Tin Liên Hệ</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            Điện thoại: (84) 123-456-789
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            Email: contact@raucon-vn.com
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+    };
+    
+    const successAlert = document.getElementById('successAlert');
+    const errorAlert = document.getElementById('errorAlert');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // Hide any existing alerts
+    successAlert.style.display = 'none';
+    errorAlert.style.display = 'none';
+    
+    fetch('{% url "contact" %}', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            successMessage.textContent = data.message;
+            successAlert.style.display = 'block';
+            form.reset();
+            
+            // Start checking for reply
+            if (data.contact_id) {
+                checkReplyStatus(data.contact_id);
+            }
+        } else {
+            errorMessage.textContent = data.message;
+            errorAlert.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        errorMessage.textContent = 'Có lỗi xảy ra. Vui lòng thử lại sau!';
+        errorAlert.style.display = 'block';
+    });
+});
+
+function checkReplyStatus(contactId) {
+    const replySection = document.getElementById('replySection');
+    const replyMessage = document.getElementById('replyMessage');
+    const replyDate = document.getElementById('replyDate');
+    
+    function checkStatus() {
+        fetch(`/check-reply-status/${contactId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.has_reply) {
+                replyMessage.textContent = data.reply;
+                replyDate.textContent = `Phản hồi lúc: ${data.replied_at}`;
+                replySection.style.display = 'block';
+                // Stop checking if we have a reply
+                clearInterval(checkInterval);
+            }
+        })
+        .catch(error => console.error('Error checking reply status:', error));
+    }
+    
+    // Check every 30 seconds for 10 minutes
+    const checkInterval = setInterval(checkStatus, 30000);
+    // Initial check
+    checkStatus();
+    
+    // Stop checking after 10 minutes
+    setTimeout(() => clearInterval(checkInterval), 600000);
+}
+</script>
+{% endblock %} 
