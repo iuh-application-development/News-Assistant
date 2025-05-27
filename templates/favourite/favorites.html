@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<form id="csrf-form">
+    {% csrf_token %}
+</form>
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách yêu thích của bạn</h2>
+    {% if favorites %}
+        <div class="row">
+            {% for item in favorites %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if item.image %}
+                    <img src="{{ item.image }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column justify-content-between h-100">
+                        <div>
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">{{ item.description|truncatechars:200 }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Nguồn: {{ item.source }} | Ngày: {{ item.pub_date }}
+                                </small>
+                            </p>
+                        </div>
+                        <div class="mt-auto d-flex flex-row align-items-center gap-2" style="margin-top: 1rem;">
+                            <a href="{{ item.link }}" target="_blank" class="btn btn-sm btn-primary">Đọc bài viết</a>
+                            <button type="button" class="remove-from-favorites btn btn-danger btn-sm" style="margin-left: 8px; min-width: 150px;"
+                                data-link="{{ item.link }}">
+                                <i class="fas fa-trash"></i> Xóa khỏi yêu thích
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p class="mb-0">Bạn chưa có mục yêu thích nào.</p>
+        </div>
+    {% endif %}
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.remove-from-favorites').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const link = this.getAttribute('data-link');
+                removeFromFavorites(link, this);
+            });
+        });
+    });
+    function removeFromFavorites(link, button) {
+        const confirmed = confirm("Bạn có chắc muốn xóa bài viết này khỏi danh sách yêu thích?");
+        if (!confirmed) return;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xóa...';
+        fetch('/favorites/remove/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('#csrf-form [name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                link: link
+            })
+        })
+        .then(res => {
+            if (res.status === 401) {
+                window.location.href = '/login/?next=' + window.location.pathname;
+                return;
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.status === 'success') {
+                // Remove the card from the DOM
+                const card = button.closest('.col-md-4');
+                card.remove();
+                
+                // Check if there are any remaining favorites
+                const remainingCards = document.querySelectorAll('.col-md-4');
+                if (remainingCards.length === 0) {
+                    // Show the "no favorites" message
+                    const container = document.querySelector('.container');
+                    container.innerHTML = `
+                        <h2 class="mb-4">Danh sách yêu thích của bạn</h2>
+                        <div class="alert alert-info">
+                            <p class="mb-0">Bạn chưa có mục yêu thích nào.</p>
+                        </div>
+                    `;
+                }
+            } else {
+                // Restore button state
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-trash"></i> Xóa khỏi yêu thích';
+                alert(data.error || 'Có lỗi xảy ra khi xóa mục yêu thích');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-trash"></i> Xóa khỏi yêu thích';
+            alert('Có lỗi xảy ra khi xóa mục yêu thích');
+        });
+    }
+</script>
+{% endblock %}

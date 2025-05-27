@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tin tức đề xuất{% endblock %}
+
+{% block content %}
+<!-- Add CSRF form -->
+<form id="csrf-form">
+    {% csrf_token %}
+</form>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Tin tức đề xuất cho bạn</h2>
+    
+    {% if message %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endif %}
+    
+    {% if top_keywords %}
+        <div class="mb-4">
+            <h5>Dựa trên các chủ đề bạn quan tâm:</h5>
+            <div class="d-flex flex-wrap gap-2">
+                {% for keyword in top_keywords %}
+                    <span class="badge bg-primary">{{ keyword }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if recommended_news %}
+        <div class="row">
+            {% for news in recommended_news %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if news.image %}
+                            <img src="{{ news.image }}" class="card-img-top" alt="{{ news.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ news.title }}</h5>
+                            <p class="card-text">{{ news.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ news.source }}</small>
+                                <small class="text-muted">{{ news.pub_date }}</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ news.link }}" class="btn btn-primary btn-sm" target="_blank">Đọc thêm</a>
+                                <button class="btn btn-outline-primary btn-sm add-to-favorites"
+                                        data-title="{{ news.title|escapejs }}"
+                                        data-link="{{ news.link }}"
+                                        data-image="{{ news.image }}"
+                                        data-description="{{ news.description|escapejs }}"
+                                        data-source="{{ news.source|escapejs }}"
+                                        data-pub_date="{{ news.pub_date|escapejs }}">
+                                    <i class="fas fa-heart"></i> Yêu thích
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Không tìm thấy tin tức đề xuất nào. Hãy thêm một số tin tức vào mục yêu thích để nhận đề xuất phù hợp hơn!
+        </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/favorites.js' %}"></script>
+{% endblock %}
+{% endblock %} 

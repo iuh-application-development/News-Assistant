@@ -1,0 +1,38 @@
+{% for item in iteam_rss %}
+<div class="col-md-4">
+    <div class="card mb-4">
+        <div class="position-relative">
+            <a href="{{item.link}}" target="_blank">
+                <img src="{{item.image}}" class="card-img-top custom-image" alt="{{item.title}}">
+            </a>
+            <!-- Hiển thị nguồn báo ở góc -->
+            <span class="news-source-badge">{{item.source}}</span>
+        </div>
+        <div class="card-body custom-box">
+            <a href="{{item.link}}" target="_blank" class="text-dark">
+                <h5 class="card-title">{{item.title}}</h5>
+            </a>
+            <p class="card-text">{{item.description}}</p>
+        </div>
+        <div class="card-footer">
+            {% if user.is_authenticated %}
+            <button class="btn btn-success add-to-favorites"
+                data-title="{{ item.title|escapejs }}"
+                data-link="{{ item.link }}"
+                data-image="{{ item.image }}"
+                data-description="{{ item.description|escapejs }}"
+                data-source="{{ item.source|escapejs }}"
+                data-pub_date="{{ item.pub_date|escapejs }}">
+                <i class="fas fa-heart"></i> Add to Favorites
+            </button>
+            {% else %}
+            <button class="btn btn-secondary w-100" onclick="window.location.href='{% url 'login' %}'">
+                <i class="fas fa-sign-in-alt"></i> Login to Add to Favorites
+            </button>
+            {% endif %}
+            <br/>
+            <small class="text-muted">{{item.pub_date}}</small>
+        </div>
+    </div>
+</div>
+{% endfor %}
