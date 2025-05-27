@@ -46,7 +46,13 @@ python manage.py runserver
 ### 8. Truy cập website
 - Mở trình duyệt web và truy cập: `http://127.0.0.1:8000`
 - Đăng nhập với tài khoản superuser đã tạo ở bước 6
-
+### Đối với việc muốn chạy trên Docker thì ta làm những lệnh sau:
+```
+docker build -t news-assistant .
+docker run -d -p 8000:8000 --name news-container news-assistant
+```
+- Sau đó có thể vào docker trong Container có tên news-container để chạy
+- Hoặc có thể gõ http://localhost:8000/ để truy cập
 ## Xử lý lỗi thường gặp
 1. Nếu gặp lỗi "ModuleNotFoundError":
    - Kiểm tra môi trường ảo đã được kích hoạt chưa
