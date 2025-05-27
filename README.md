@@ -12,11 +12,13 @@ Lý do chọn đề tài: Django là một framework mạnh mẽ và phổ biế
 # THÔNG TIN NHÓM
 
 Phan Tôn Bá Sang - ``` phantonbasang@gmail.com ``` <br>
-- Đảm nhận: Tạo trang giới thiệu, liên hệ, danh mục , tin tổng hợp với RSS
+Đảm nhận: Tạo trang giới thiệu, liên hệ, danh mục , tin tổng hợp với RSS <br>
+<br>
 Trần Minh Hiếu - ``` minhhieutk5@gmail.com ``` <br>
-- Đảm nhận: Tìm kiếm, Đề xuất, Mục yêu thích
+Đảm nhận: Tìm kiếm, Đề xuất, Mục yêu thích <br>
+<br>
 Lê Quang Đỉnh - ``` dinhlequang57@gmail.com ``` <br>
-- Đảm nhận: Đăng nhập, đăng ký 
+Đảm nhận: Đăng nhập, đăng ký <br>
 
 
 # HƯỚNG DẪN CÀI ĐẶT VÀ CHẠY DỰ ÁN WEB
